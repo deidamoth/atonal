@@ -40,6 +40,6 @@ The DFU scan during development found no device. **This expansion has not been f
 
 ## Baseline protection
 
-The original GitHub repository is not a remote in this checkout. New development is published only to `deidamoth/daisy-pod-vocoder-granular`. Original source/core and recovery binary are preserved in history; original v1.0.0 remains at `deidamoth/working-vocoder`.
+The original GitHub repository is not a remote in this checkout. New development is published only to `deidamoth/working-vocoder-plus-gran`. Original source/core and recovery binary are preserved in history; original v1.0.0 remains at `deidamoth/working-vocoder`.
 
 New experimental firmware is saved in `firmware/daisy-pod-vocoder-granular-v0.1.0.bin`; its SHA-256 is recorded in `firmware/GRANULAR-SHA256SUMS`.

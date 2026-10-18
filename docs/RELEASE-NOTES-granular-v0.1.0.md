@@ -1,4 +1,4 @@
-# Vocoder + Granular FX — experimental v0.1.0
+# Working Vocoder Plus Gran — experimental v0.1.0
 
 Separate expansion of the owner-confirmed WORKING VOCODER v1.0.0. The baseline repository remains unchanged.
 

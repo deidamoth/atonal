@@ -1,4 +1,4 @@
-# Daisy Pod Vocoder + Granular FX
+# Working Vocoder Plus Gran
 
 A **separate expansion** of [WORKING VOCODER v1.0.0](https://github.com/deidamoth/working-vocoder/releases/tag/v1.0.0). The original repository, release and firmware remain untouched. This version adds a stereo granular layer after the working four-voice vocoder.
 
@@ -27,8 +27,8 @@ The effect processes the **whole vocoder output**, including dry voice if Knob 1
 Mic → preamp → Pod line input; keyboard → Pod MIDI input; Pod output → headphones/mixer. Left/right inputs are averaged as before. USB data cable → Seed for DFU.
 
 ```sh
-git clone --recurse-submodules https://github.com/deidamoth/daisy-pod-vocoder-granular.git
-cd daisy-pod-vocoder-granular
+git clone --recurse-submodules https://github.com/deidamoth/working-vocoder-plus-gran.git
+cd working-vocoder-plus-gran
 export PATH=/opt/homebrew/bin:$PATH
 make -C libDaisy
 make -C DaisySP

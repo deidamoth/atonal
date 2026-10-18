@@ -1,6 +1,6 @@
 # Project boundaries
 
-This is the granular expansion repository, `deidamoth/daisy-pod-vocoder-granular`.
+This is the granular expansion repository, `deidamoth/working-vocoder-plus-gran`.
 The baseline `/Users/justinasoto/Documents/daisy-pod-midi-vocoder` and GitHub
 `deidamoth/working-vocoder` must remain untouched. Do not push to that remote.
 Do not modify the separate `daisy-pod-sine-flash` project.
