@@ -1,3 +1,19 @@
+# Working Vocoder Plus Gran Plus Sample
+
+Same firmware as [working-vocoder-plus-gran](https://github.com/deidamoth/working-vocoder-plus-gran), plus a parallel one-shot.
+
+The vocoder DSP, saw voices, speech gate, Knob 1, Knob 2, and granular trail are unchanged. The squeak is mixed in **after** that chain. It does not go through the vocoder or the grains.
+
+| Extra behavior | |
+|---|---|
+| Sample | `chair squeak softest.wav`, treated as **C3** (MIDI 60) |
+| Trigger | Same MIDI notes, only while the vocoder (Button 1) is on |
+| Pitch | Chromatic, like Simpler: each note retunes the one-shot |
+| Voices | 4 one-shots, independent of the saws |
+| Note off | Does not cut the squeak; it plays through |
+
+Button 1 still turns the vocoder on/off, and that also opens or mutes the sample layer.
+
 # Working Vocoder Plus Gran
 
 A **separate expansion** of [WORKING VOCODER v1.0.0](https://github.com/deidamoth/working-vocoder/releases/tag/v1.0.0). The original repository, release and firmware remain untouched. This version adds a stereo granular layer after the working four-voice vocoder.

@@ -10,6 +10,7 @@
 #include "daisysp.h"
 #include "VocoderDsp.h"
 #include "GranularFx.h"
+#include "SampleLayer.h"
 #include "util/CpuLoadMeter.h"
 #include "util/scopedirqblocker.h"
 
@@ -32,7 +33,9 @@ struct Voice
 Voice     voices[kVoices];
 VocoderDsp dsp;
 GranularFx granular;
+SampleLayer samples;
 static float DSY_SDRAM_BSS granular_storage[GranularFx::kStorageSize];
+static int16_t DSY_SDRAM_BSS squeak_pcm[kSqueakFrames];
 CpuLoadMeter cpu_load;
 volatile float cpu_load_average = 0.f;
 volatile float cpu_load_peak = 0.f;
@@ -87,6 +90,9 @@ void VoiceNoteOn(uint8_t note, uint8_t vel)
     voices[v].age = ++voice_age;
     voices[v].osc.SetFreq(mtof(note));
     voices[v].osc.SetAmp(0.15f + 0.25f * (vel / 127.f));
+    // One-shot only while the vocoder is on. Does not change the saw voice.
+    if(vocoder_on)
+        samples.NoteOn(note);
 }
 
 void VoiceNoteOff(uint8_t note)
@@ -154,8 +160,11 @@ void AudioCallback(AudioHandle::InputBuffer  in,
         const float raw = (in[0][i] + in[1][i]) * 0.5f;
         const float sig = dsp.Process(raw, car, dry_amt, wet_amt);
         const auto effected = granular.Process(sig);
-        out[0][i] = effected.left;
-        out[1][i] = effected.right;
+        // Summed after the vocoder and granular trail. Their DSP is unchanged.
+        const float squeak = samples.Process();
+        const float layer  = vocoder_on ? squeak : 0.f;
+        out[0][i] = effected.left + layer;
+        out[1][i] = effected.right + layer;
     }
 
     float led = vocoder_on ? 0.55f : 0.f;
@@ -193,6 +202,7 @@ int main(void)
     dsp.Init(sr);
     // SDRAM is available only after hw.Init(); initialize before audio starts.
     granular.Init(sr, granular_storage);
+    samples.Init(sr, squeak_pcm);
     cpu_load.Init(sr, 48);
     midi_queue.Init();
 
