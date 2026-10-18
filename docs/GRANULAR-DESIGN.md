@@ -2,7 +2,7 @@
 
 ## Reference
 
-The supplied screenshot identifies **MONTAG-E by Antonio Blanca**, preset **019 CHORD Piano Speak*** in the Reaktor header, while the video's overlay says **Chord Piano Sneak**. The asterisk also suggests an edited snapshot. The requested passage is about 3:56 in X3N's “Is This the CRAZIEST Granular Synth Ever?”; no playable video link/audio was supplied during implementation, so that passage has not been auditioned. We cannot infer exact preset parameters or the source piano sample from the screenshot/transcript.
+The reference is **MONTAG-E by Antonio Blanca**, preset **Chord Piano Speak**, as confirmed by the owner. The Reaktor header shows snapshot 019 with an asterisk, suggesting an edited snapshot; the video overlay misspells the preset name. The requested passage is about 3:56 in X3N's “Is This the CRAZIEST Granular Synth Ever?”; no playable video link/audio was supplied during implementation, so that passage has not been auditioned. We cannot infer exact preset parameters or the source piano sample from the screenshot/transcript.
 
 The [developer's overview](https://antblanca.com/pages/montag-e) documents four playheads on one sample, parameter spread, modulation, and a filter/delay section. The screenshot highlights position randomization and pan. These motivate a live four-head texture, not a copy of the proprietary instrument or sample library. The developer also links an [interface overview PDF](https://drive.google.com/file/d/15oRclBgJvsMi5fPHqRHmxxSGxQEJZ3Sd/view); its contents were not accessible to the browser here.
 

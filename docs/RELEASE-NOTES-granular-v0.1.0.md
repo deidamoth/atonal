@@ -8,4 +8,4 @@ Separate expansion of the owner-confirmed WORKING VOCODER v1.0.0. The baseline r
 - Firmware build and host tests passed. **Not flashed or hardware-tested yet.** No DFU device was found.
 - Includes a synthetic audio preview: bypass / half FX / full FX in three five-second sections.
 
-Inspired by MONTAG-E's documented four-head approach and the supplied screenshot. Not an exact recreation of its preset; the reference passage has not been auditioned.
+Inspired by MONTAG-E's documented four-head approach and the supplied **Chord Piano Speak** screenshot. Not an exact recreation of its preset; the reference passage has not been auditioned.
