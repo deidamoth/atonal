@@ -2,7 +2,7 @@
 
 A **separate expansion** of [WORKING VOCODER v1.0.0](https://github.com/deidamoth/working-vocoder/releases/tag/v1.0.0). The original repository, release and firmware remain untouched. This version adds a stereo granular layer after the working four-voice vocoder.
 
-**Status:** builds and passes host DSP tests; not yet flashed or listening-tested on the Pod. This is an experimental version, not a claim of an exact MONTAG-E preset recreation.
+**Status:** builds and passes host DSP tests; firmware transfer completed; Pod startup and listening tests still pending. This is an experimental version, not a claim of an exact MONTAG-E preset recreation.
 
 ## Controls
 

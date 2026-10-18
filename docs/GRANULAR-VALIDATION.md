@@ -36,7 +36,7 @@ c++ -std=c++14 -O2 -Wall -Wextra -Werror tools/render_granular_demo.cpp -o /tmp/
 
 ## Device status
 
-The DFU scan during development found no device. **This expansion has not been flashed.** Hardware listening, CPU measurements and comparison to the reference passage remain outstanding. The previously confirmed working vocoder stays on the device unless it is subsequently flashed with another image.
+After the owner entered DFU mode, the Seed was detected as `0483:df11`. The build was current and `make program-dfu` transferred all **95,144 bytes** to `0x08000000`, reporting **File downloaded successfully**. During the leave request, dfu-util reported **Error during download get_status** (error 74; make exit 2). A follow-up scan showed no DFU device. This confirms a completed transfer with an exit-stage error, not a clean command exit or verified startup. No device readback was performed. Hardware listening, CPU measurements and comparison to the reference passage remain outstanding.
 
 ## Baseline protection
 
