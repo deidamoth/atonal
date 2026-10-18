@@ -8,3 +8,5 @@ build/
 *.map
 .DS_Store
 flash.log
+__pycache__/
+*.pyc
