@@ -1,58 +1,55 @@
-# WORKING VOCODER
+# Daisy Pod Vocoder + Granular FX
 
-**Working Daisy Pod MIDI vocoder — v1.0.0.** Owner-confirmed working audio and speech gate after flashing. This is the saved hardware baseline; future firmware experiments belong in a separate repository.
+A **separate expansion** of [WORKING VOCODER v1.0.0](https://github.com/deidamoth/working-vocoder/releases/tag/v1.0.0). The original repository, release and firmware remain untouched. This version adds a stereo granular layer after the working four-voice vocoder.
 
-## Daisy Pod setup
+**Status:** builds and passes host DSP tests; not yet flashed or listening-tested on the Pod. This is an experimental version, not a claim of an exact MONTAG-E preset recreation.
 
-Mic → microphone preamp → Pod line input. MIDI keyboard → Pod MIDI input using the correct adapter. Pod audio output → headphones / mixer / speakers. Left and right inputs are averaged to mono; output is the same on both channels. A left-only input is reduced by 6 dB. USB connects the Seed to the computer for flashing.
+## Controls
 
-| Control | Saved firmware mapping |
+| Control | Function |
 |---|---|
-| Button 1 | Toggle vocoder wet path; starts **off** |
-| Knob 1 | Dry voice level: left = none, right = maximum |
-| Knob 2 | Vocoder wet level: left = none, right = maximum |
-| MIDI keys | Four velocity-sensitive saw voices; oldest held voice stolen when full |
-| LED 1 | Blue/cyan when vocoder enabled |
-| LED 2 | Blue while at least one MIDI note is held |
-| Button 2 / encoder turn / encoder press | Unassigned |
-| Seed BOOT + RESET | Enter DFU bootloader; RESET alone restarts firmware |
+| Button 1 | Vocoder on/off, unchanged; starts off |
+| Knob 1 | Dry voice level, unchanged |
+| Button 2 | Granular FX on/off; starts off |
+| Knob 2 | Granular amount: left = original sound, right = most added texture |
+| LED 1 | Blue/cyan = vocoder enabled |
+| LED 2 | Green = FX enabled; blue = MIDI held; cyan = both; red component = average CPU use above 85% |
+| Encoder turn/press | Unassigned |
 
-For fully wet sound: Button 1 on, Knob 1 left, Knob 2 up; hold notes and speak/sing. For dry only: Button 1 off, Knob 1 up. No sustain/pitch-bend/CC mapping; notes from all MIDI channels share four voices.
+**Knob 2 was the original vocoder wet-level control.** To repurpose it, the base vocoder wet level is fixed at its former maximum, **0.55**. Button 1 still mutes that wet path. The original vocoder DSP, gate, MIDI voices, Knob 1 and note handling are preserved. FX bypass matches the baseline with its original Knob 2 at maximum; it cannot preserve arbitrary previous wet-knob positions simultaneously.
 
-**Listening note:** the owner reports Knob 1 feels like “left = vocoder, right = just audio.” The saved code adds dry audio as Knob 1 rises; it does **not** crossfade away the wet signal. The working firmware has been preserved unchanged.
+Start with Knob 1 left, Knob 2 left. Press Button 1, hold a chord and sing. Press Button 2 and gradually raise Knob 2. The immediate voice stays present while small overlapping fragments move around it. Returning Knob 2 left or switching FX off fades back to the original mono signal over 30 ms.
 
-## Build and flash (macOS)
+The effect processes the **whole vocoder output**, including dry voice if Knob 1 is up. The original speech gate still works; FX tails can continue briefly after you stop singing. With FX bypassed, the original silence behavior returns. Stereo output reveals the movement best; both channels also work summed to mono.
 
-Requires ARM GCC, Make, dfu-util and the pinned libDaisy/DaisySP dependencies. On a fresh clone:
+## Connections and build
+
+Mic → preamp → Pod line input; keyboard → Pod MIDI input; Pod output → headphones/mixer. Left/right inputs are averaged as before. USB data cable → Seed for DFU.
 
 ```sh
-git clone --recurse-submodules https://github.com/deidamoth/working-vocoder.git
-cd working-vocoder
+git clone --recurse-submodules https://github.com/deidamoth/daisy-pod-vocoder-granular.git
+cd daisy-pod-vocoder-granular
 export PATH=/opt/homebrew/bin:$PATH
 make -C libDaisy
 make -C DaisySP
 make
 ```
 
-Connect the Seed with a USB data cable. Hold **BOOT**, press/release **RESET**, release **BOOT**. Then:
+To flash **only after a successful build**: hold Seed BOOT, press/release RESET, release BOOT; then:
 
 ```sh
-dfu-util -l       # Must show 0483:df11 and Internal Flash
-make program-dfu  # Run only after make succeeds
+dfu-util -l       # must identify 0483:df11, Internal Flash
+make program-dfu  # writes build/DaisyPodVocoderGranular.bin
 ```
 
-To restore the exact saved binary without rebuilding:
+The original working binary is included for recovery:
 
 ```sh
 shasum -a 256 -c firmware/SHA256SUMS
-dfu-util -l
+# Enter DFU again before restoring:
 dfu-util -a 0 -s 0x08000000:leave -D firmware/working-vocoder-v1.0.0.bin -d ,0483:df11
 ```
 
-[Build/flash record and DSP details](docs/WORKING-VOCODER-v1.0.0.md). [Exact firmware](firmware/working-vocoder-v1.0.0.bin).
+[Design/research](docs/GRANULAR-DESIGN.md) · [Validation](docs/GRANULAR-VALIDATION.md) · [15-second synthetic preview](previews/granular-comparison.wav): 0–5 s bypass, 5–10 s half FX, 10–15 s full FX. Each section includes pauses/tails. It demonstrates this code with a synthetic vowel/chord, not a microphone recording or the reference video's audio.
 
-## Computer version (no Daisy needed)
-
-Open **[pd/WORKING-VOCODER.pd](pd/WORKING-VOCODER.pd)** in Pure Data Vanilla or plugdata standalone. It is self-contained; no external objects or extra patch files are needed. Select your audio input/output and MIDI keyboard in the application's settings, then enable audio/DSP. Start with headphones, dry at zero, wet at 0.55 and the vocoder enabled. Hold a chord and speak. [Computer setup and controls](pd/README.md).
-
-The old `midi_vocoder_barebones.pd` is a historical prototype, not the finished computer version.
+The inherited `pd/WORKING-VOCODER.pd` remains the **baseline computer vocoder**; this expansion currently targets Daisy firmware only.

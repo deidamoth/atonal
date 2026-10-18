@@ -1,4 +1,4 @@
-TARGET = DaisyPodVocoder
+TARGET = DaisyPodVocoderGranular
 CPP_SOURCES = DaisyPodVocoder.cpp
 
 LIBDAISY_DIR = libDaisy

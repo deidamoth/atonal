@@ -2,12 +2,15 @@
 // Mic formants shape a summed saw carrier — silent when you're not singing
 // Button 1: vocoder path on/off
 // Knob 1: dry voice level
-// Knob 2: wet (vocoded) level
+// Knob 2: granular FX amount (base vocoder wet fixed at 0.55)
+// Button 2: granular FX on/off
 // Carrier: WAVE_POLYBLEP_SAW × 4 voices
 
 #include "daisy_pod.h"
 #include "daisysp.h"
 #include "VocoderDsp.h"
+#include "GranularFx.h"
+#include "util/CpuLoadMeter.h"
 #include "util/scopedirqblocker.h"
 
 using namespace daisy;
@@ -28,9 +31,15 @@ struct Voice
 
 Voice     voices[kVoices];
 VocoderDsp dsp;
+GranularFx granular;
+static float DSY_SDRAM_BSS granular_storage[GranularFx::kStorageSize];
+CpuLoadMeter cpu_load;
+volatile float cpu_load_average = 0.f;
+volatile float cpu_load_peak = 0.f;
+bool fx_on = false;
 RingBuffer<MidiEvent, 64> midi_queue;
 Parameter p_dry;
-Parameter p_wet;
+Parameter p_fx;
 
 bool     vocoder_on  = false;
 uint32_t voice_age   = 0;
@@ -119,6 +128,7 @@ void AudioCallback(AudioHandle::InputBuffer  in,
                    AudioHandle::OutputBuffer out,
                    size_t                    size)
 {
+    cpu_load.OnBlockStart();
     // Only the audio callback mutates oscillator and envelope state.
     while(midi_queue.readable())
         HandleMidiMessage(midi_queue.Read());
@@ -127,8 +137,12 @@ void AudioCallback(AudioHandle::InputBuffer  in,
     if(hw.button1.RisingEdge())
         vocoder_on = !vocoder_on;
 
+    if(hw.button2.RisingEdge())
+        fx_on = !fx_on;
+    granular.SetControls(fx_on, p_fx.Process());
+
     float dry_amt = p_dry.Process() * 0.55f;
-    float wet_amt = vocoder_on ? p_wet.Process() * 0.55f : 0.f;
+    float wet_amt = vocoder_on ? 0.55f : 0.f;
 
     for(size_t i = 0; i < size; i++)
     {
@@ -139,14 +153,20 @@ void AudioCallback(AudioHandle::InputBuffer  in,
         car *= 0.5f;
         const float raw = (in[0][i] + in[1][i]) * 0.5f;
         const float sig = dsp.Process(raw, car, dry_amt, wet_amt);
-        out[0][i] = sig;
-        out[1][i] = sig;
+        const auto effected = granular.Process(sig);
+        out[0][i] = effected.left;
+        out[1][i] = effected.right;
     }
 
     float led = vocoder_on ? 0.55f : 0.f;
     hw.led1.Set(0.f, led * 0.2f, led);
-    hw.led2.Set(0.f, 0.f, AnyGate() ? 0.35f : 0.f);
+    // Green = FX enabled; blue = held MIDI note. Red flags high CPU use.
+    hw.led2.Set(cpu_load_average > 0.85f ? 0.6f : 0.f,
+                fx_on ? 0.35f : 0.f, AnyGate() ? 0.35f : 0.f);
     hw.UpdateLeds();
+    cpu_load.OnBlockEnd();
+    cpu_load_average = cpu_load.GetAvgCpuLoad();
+    cpu_load_peak = cpu_load.GetMaxCpuLoad();
 }
 
 int main(void)
@@ -171,10 +191,13 @@ int main(void)
     }
 
     dsp.Init(sr);
+    // SDRAM is available only after hw.Init(); initialize before audio starts.
+    granular.Init(sr, granular_storage);
+    cpu_load.Init(sr, 48);
     midi_queue.Init();
 
     p_dry.Init(hw.knob1, 0.f, 1.f, Parameter::LINEAR);
-    p_wet.Init(hw.knob2, 0.f, 1.f, Parameter::LINEAR);
+    p_fx.Init(hw.knob2, 0.f, 1.f, Parameter::LINEAR);
 
     hw.StartAdc();
     hw.StartAudio(AudioCallback);
