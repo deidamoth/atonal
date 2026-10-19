@@ -11,6 +11,7 @@
 #include "VocoderDsp.h"
 #include "GranularFx.h"
 #include "SampleLayer.h"
+#include "QuarterTonePitch.h"
 #include "util/CpuLoadMeter.h"
 #include "util/scopedirqblocker.h"
 
@@ -88,7 +89,7 @@ void VoiceNoteOn(uint8_t note, uint8_t vel)
     voices[v].note = note;
     voices[v].on  = true;
     voices[v].age = ++voice_age;
-    voices[v].osc.SetFreq(mtof(note));
+    voices[v].osc.SetFreq(QuarterTonePitch::Frequency(note));
     voices[v].osc.SetAmp(0.15f + 0.25f * (vel / 127.f));
     // One-shot only while the vocoder is on. Does not change the saw voice.
     if(vocoder_on)

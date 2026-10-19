@@ -3,6 +3,7 @@
 // The recording is an F, mapped to F3 (MIDI 65). Playback is one-shot.
 
 #include "ChairSqueakAdpcm.h"
+#include "QuarterTonePitch.h"
 #include <cmath>
 #include <cstdint>
 
@@ -10,7 +11,7 @@ class SampleLayer
 {
   public:
     static constexpr int kVoices = 4;
-    static constexpr int kRootNote = 65;
+    static constexpr int kRootNote = QuarterTonePitch::kRootNote;
 
     void Init(float sampleRate, int16_t* pcm)
     {
@@ -45,7 +46,7 @@ class SampleLayer
                 }
             }
         }
-        const float pitch = powf(2.f, (float(note) - float(kRootNote)) / 12.f);
+        const float pitch = QuarterTonePitch::Ratio(note);
         voice_[slot].on   = true;
         voice_[slot].pos  = 0.f;
         voice_[slot].inc  = (float(kSqueakRate) / sr_) * pitch;
