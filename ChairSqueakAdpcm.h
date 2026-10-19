@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
-// CHAIR_NIME.wav, mono 32 kHz IMA ADPCM. Root pitch F4 / MIDI 77.
+// CHAIR_NIME.wav, mono 32 kHz IMA ADPCM. Original speed is F3 / MIDI 65.
 static constexpr int kSqueakRate = 32000;
 static constexpr int kSqueakFrames = 53119;
 static constexpr int16_t kSqueakPredictor = 0;
