@@ -1,6 +1,6 @@
 #pragma once
 // Parallel one-shot player. Does not touch the vocoder or granular DSP.
-// Original speed is F3 (MIDI 65), so F4 plays one octave higher. Playback is one-shot.
+// The recording is an F, mapped to F3 (MIDI 65). Playback is one-shot.
 
 #include "ChairSqueakAdpcm.h"
 #include <cmath>
