@@ -2,15 +2,30 @@
 
 Based on [working-vocoder-plus-gran-plus-sample at 7db4bb0](https://github.com/deidamoth/working-vocoder-plus-gran-plus-sample/commit/7db4bb0).
 
-The four saw carriers of the vocoder and the separate embedded `CHAIR_NIME.wav`
-one-shot both use **24-tone equal temperament: one quarter tone per MIDI key**.
-Both share the requested **F3 anchor, MIDI note 65** (349.228231 Hz, the normal
-12-tone frequency of MIDI 65). MIDI numbers define the anchor regardless of a
-keyboard's octave-label convention.
+The four saw carriers and embedded `CHAIR_NIME.wav` one-shot share a
+**seven-note microtonal scale on the white keys**, with a neutral third and
+neutral seventh. It uses pitches from 24-tone equal temperament, but no longer
+moves one quarter tone per MIDI key. A keyboard octave now sounds an octave.
+The anchor remains **MIDI 65 (F, 349.228231 Hz)**, called F3 in this project;
+octave labels vary between keyboards. The sample plays at recorded speed there.
 
-- Sample playback ratio: `2^((note - 65) / 24)`. Note 65 plays at recorded speed.
-- Saw frequency: `349.228231 * 2^((note - 65) / 24)` Hz.
-- Note 77 is a tritone above the anchor; note 89 is one octave above it.
+| White key (MIDI) | Sound relative to F | Cents above anchor |
+|---|---|---|
+| F (65) | F | 0 |
+| G (67) | G | 200 |
+| A (69) | A half-flat (neutral third) | 350 |
+| B (71) | B-flat (fourth) | 500 |
+| C (72) | C (fifth) | 700 |
+| D (74) | D (sixth) | 900 |
+| E (76) | E half-flat (neutral seventh) | 1050 |
+| F (77) | F, octave above | 1200 |
+
+Black keys provide extra color between adjacent white-key pitches, using the
+midpoint rounded upward to the nearest quarter tone: MIDI 66/68/70/73/75 map to
+100/300/450/800/1000 cents above the anchor. This pattern repeats every 12 MIDI
+keys, including below the anchor. Note 89 is now two octaves above the anchor.
+Both sample ratio and saw frequency use the same mapping in `QuarterTonePitch.h`.
+This is our chosen scale, not a verified transcription of Erica Eso.
 
 The vocoder DSP, four saw waveforms, speech gate, granular trail, and controls
 are preserved. This changes carrier and sample tuning; it does not add a pitch
@@ -21,13 +36,14 @@ Its four independent one-shot voices play through after note-off (a fifth
 trigger steals the oldest voice). Button 1 also mutes the sample when off.
 The sample is mixed after the vocoder and grains, and never passes through either.
 
-**Validation (2026-10-19):** firmware build passed; pitch checks passed for all
-128 MIDI notes; inherited vocoder and granular host tests passed, including exact
-bypass. `VocoderDsp.h`, `GranularFx.h`, and the embedded sample are unchanged from
-7db4bb0. USB DFU detected `0483:df11` Internal Flash and downloaded all **128,080
-bytes** successfully to `0x08000000`. The subsequent leave request produced
+**Validation:** revised-scale build passed, along with host checks of white-key
+intervals, black-key pitches, anchor speed, monotonicity and octave repetition
+across all 128 MIDI notes. Vocoder/granular DSP and embedded sample remain
+unchanged from 7db4bb0; inherited DSP tests passed for the initial atonal version.
+USB DFU detected `0483:df11` Internal Flash and successfully transferred all
+**128,280 bytes** to `0x08000000`. The leave request then reported
 `Error during download get_status` / error 74. Hardware startup and listening
-tests for atonal are still pending; tap RESET if it does not start automatically.
+tests of this revision remain pending; tap RESET if needed.
 Inherited validation documents and recovery binaries describe earlier firmware.
 
 ## Controls
