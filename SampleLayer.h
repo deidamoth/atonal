@@ -1,6 +1,6 @@
 #pragma once
 // Parallel one-shot player. Does not touch the vocoder or granular DSP.
-// Root pitch of the embedded squeak is C3 (MIDI 60). Playback is one-shot.
+// Root pitch of the embedded squeak is F4 (MIDI 77). Playback is one-shot.
 
 #include "ChairSqueakAdpcm.h"
 #include <cmath>
@@ -10,7 +10,7 @@ class SampleLayer
 {
   public:
     static constexpr int kVoices = 4;
-    static constexpr int kRootNote = 60;
+    static constexpr int kRootNote = 77;
 
     void Init(float sampleRate, int16_t* pcm)
     {

@@ -6,7 +6,7 @@ The vocoder DSP, saw voices, speech gate, Knob 1, Knob 2, and granular trail are
 
 | Extra behavior | |
 |---|---|
-| Sample | `CHAIR_NIME.wav`, treated as **C3** (MIDI 60) |
+| Sample | `CHAIR_NIME.wav`, treated as **F4** (MIDI 77) |
 | Trigger | Same MIDI notes, only while the vocoder (Button 1) is on |
 | Pitch | Chromatic, like Simpler: each note retunes the one-shot |
 | Voices | 4 one-shots, independent of the saws |
